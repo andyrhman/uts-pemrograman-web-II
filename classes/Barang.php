@@ -19,21 +19,43 @@ class Barang
         $harga_beli = mysqli_real_escape_string($this->db->link, $data['harga_beli']);
         $status_barang = ($data['status_barang'] === 'true') ? 1 : 0;
 
-        if (empty($kode_barang)) {
-            $msg = "Kode Barang tidak boleh kosong";
-            return $msg;
+        // Simpan sesi lama di input value
+        $_SESSION['old'] = $data;
+
+        // Cek kode barang
+        $checkBarang = "SELECT * FROM `barang` WHERE `kode_barang` = '$kode_barang'";
+        $hasilCheck = $this->db->pilih($checkBarang);
+
+        if ($hasilCheck->num_rows > 0) {
+            $_SESSION['pesan_alert'] = "Kode Barang sudah ada";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: masukkan-data.php");
+            exit();
+        } elseif (empty($kode_barang)) {
+            $_SESSION['pesan_alert'] = "Kode Barang tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: masukkan-data.php");
+            exit();
         } elseif (empty($nama_barang)) {
-            $msg = "Nama Barang tidak boleh kosong";
-            return $msg;
+            $_SESSION['pesan_alert'] = "Nama Barang tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: masukkan-data.php");
+            exit();
         } elseif (empty($jumlah_barang)) {
-            $msg = "Jumlah Barang tidak boleh kosong";
-            return $msg;
+            $_SESSION['pesan_alert'] = "Jumlah Barang tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: masukkan-data.php");
+            exit();
         } elseif (empty($satuan_barang)) {
-            $msg = "Satuan Barang tidak boleh kosong";
-            return $msg;
+            $_SESSION['pesan_alert'] = "Satuan Barang tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: masukkan-data.php");
+            exit();
         } elseif (empty($harga_beli)) {
-            $msg = "Harga Beli tidak boleh kosong";
-            return $msg;
+            $_SESSION['pesan_alert'] = "Harga Beli tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: masukkan-data.php");
+            exit();
         } else {
             $query = "INSERT INTO `barang`(`kode_barang`, `nama_barang`, `jumlah_barang`, `satuan_barang`, `harga_beli`, `status_barang`) 
             VALUES ('$kode_barang', '$nama_barang', '$jumlah_barang', '$satuan_barang', '$harga_beli', '$status_barang')";
@@ -41,14 +63,15 @@ class Barang
             $result = $this->db->masukkan($query);
 
             if ($result) {
-                $_SESSION['pesan_alert'] = "Berhasil Dimasukkan";
-                $_SESSION['tipe_alert'] = "success";
-                header("Location: masukkan-data.php");
+                unset($_SESSION['old']);
+                $_SESSION['toast_message'] = "Berhasil Dimasukkan";
+                $_SESSION['toast_type'] = "success";
+                header("Location: index.php");
                 exit();
             } else {
-                $_SESSION['pesan_alert'] = "Gagal Dimasukkan";
-                $_SESSION['tipe_alert'] = "error";
-                header("Location: masukkan-data.php");
+                $_SESSION['toast_message'] = "Gagal Dimasukkan";
+                $_SESSION['toast_type'] = "error";
+                header("Location: index.php");
                 exit();
             }
         }
@@ -102,103 +125,121 @@ class Barang
         }
     }
 
-    // public function getStudentById($id)
-    // {
-    //     $query = "SELECT * FROM `tbl_register` WHERE id='$id'";
-    //     $result = $this->db->select($query);
-    //     return $result;
-    // }
+    public function updateStatusBarang($kode_barang, $status_barang)
+    {
+        $kode_barang = mysqli_real_escape_string($this->db->link, $kode_barang);
+        $status_barang = (int) $status_barang;
 
-    // public function updateStudent($data, $file, $id)
-    // {
-    //     $name = mysqli_real_escape_string($this->db->link, $data['name']);
-    //     $email = mysqli_real_escape_string($this->db->link, $data['email']);
-    //     $phone = mysqli_real_escape_string($this->db->link, $data['phone']);
-    //     $address = mysqli_real_escape_string($this->db->link, $data['address']);
+        $query = "UPDATE `barang` SET `status_barang` = $status_barang WHERE `kode_barang` = '$kode_barang'";
 
-    //     $permitted = array("jpg", "jpeg", "png", "gif");
-    //     $file_name = $file['photo']['name'];
-    //     $file_size = $file['photo']['size'];
-    //     $file_temp = $file['photo']['tmp_name'];
+        $result = $this->db->update($query);
 
-    //     $div = explode(".", $file_name);
-    //     $file_ext = strtolower(end($div));
-    //     $unique_image = substr(md5(time()), 0, 10) . '.' . $file_ext;
-    //     $upload_image = "upload/" . $unique_image;
+        if ($result) {
+            $_SESSION['toast_message'] = "Status barang berhasil diganti.";
+            $_SESSION['toast_type'] = "success";
+            return true;
+        } else {
+            $_SESSION['toast_message'] = "Gagal mengganti status barang.";
+            $_SESSION['toast_type'] = "error";
+            return false;
+        }
+    }
 
-    //     if (empty($name) || empty($email) || empty($phone) || empty($address)) {
-    //         $msg = "Field must not be empty";
-    //         return $msg;
-    //     }
-    //     if (!empty($file_name)) {
-    //         if ($file_size > 1048567) {
-    //             $msg = "File size must be less than 1 MB";
-    //             return $msg;
-    //         } elseif (!in_array($file_ext, $permitted)) {
-    //             $msg = "You can only upload " . implode(",", $permitted);
-    //             return $msg;
-    //         } else {
+    public function pilihBarang($id)
+    {
+        $query = "SELECT * FROM `barang` WHERE id_barang='$id'";
+        $result = $this->db->pilih($query);
+        return $result;
+    }
 
-    //             $img_query = "SELECT * FROM tbl_register WHERE id = '$id'";
-    //             $img_res = $this->db->select($img_query);
-    //             if ($img_res) {
-    //                 while ($row = mysqli_fetch_assoc($img_res)) {
-    //                     $photo = $row["photo"];
-    //                     unlink($photo);
-    //                 }
-    //             }
+    public function updateBarang($data, $id)
+    {
+        $kode_barang = mysqli_real_escape_string($this->db->link, $data['kode_barang']);
+        $nama_barang = mysqli_real_escape_string($this->db->link, $data['nama_barang']);
+        $jumlah_barang = mysqli_real_escape_string($this->db->link, $data['jumlah_barang']);
+        $satuan_barang = mysqli_real_escape_string($this->db->link, $data['satuan_barang']);
+        $harga_beli = mysqli_real_escape_string($this->db->link, $data['harga_beli']);
+        $status_barang = ($data['status_barang'] === 'true') ? 1 : 0;
 
-    //             move_uploaded_file($file_temp, $upload_image);
-    //             $query = "UPDATE `tbl_register` SET `name`='$name',`email`='$email',
-    //                 `phone`='$phone',`photo`='$upload_image',`address`='$address' WHERE id=$id";
+        if (empty($kode_barang)) {
+            $_SESSION['pesan_alert'] = "Kode Barang tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: edit.php?id=$id");
+            exit();
+        } elseif (empty($nama_barang)) {
+            $_SESSION['pesan_alert'] = "Nama Barang tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: edit.php?id=$id");
+            exit();
+        } elseif (empty($jumlah_barang)) {
+            $_SESSION['pesan_alert'] = "Jumlah Barang tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: edit.php?id=$id");
+            exit();
+        } elseif (empty($satuan_barang)) {
+            $_SESSION['pesan_alert'] = "Satuan Barang tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: edit.php?id=$id");
+            exit();
+        } elseif (empty($harga_beli)) {
+            $_SESSION['pesan_alert'] = "Harga Beli tidak boleh kosong";
+            $_SESSION['tipe_alert'] = "error";
+            header("Location: edit.php?id=$id");
+            exit();
+        } else {
+            // Fetch the current kode_barang from the database
+            $current_query = "SELECT kode_barang FROM `barang` WHERE id_barang = $id";
+            $current_result = $this->db->pilih($current_query);
+            $current_row = mysqli_fetch_assoc($current_result);
+            $current_kode_barang = $current_row['kode_barang'];
 
-    //             $result = $this->db->insert($query);
+            // Check if kode_barang has changed
+            if ($kode_barang !== $current_kode_barang) {
+                // Check if the new kode_barang already exists
+                $check_query = "SELECT * FROM `barang` WHERE kode_barang = '$kode_barang'";
+                $check_result = $this->db->pilih($check_query);
 
-    //             if ($result) {
-    //                 $msg = "Student Updated Successfull";
-    //                 return $msg;
-    //             } else {
-    //                 $msg = "Update Failed";
-    //                 return $msg;
-    //             }
+                if ($check_result) {
+                    $_SESSION['pesan_alert'] = "Kode Barang sudah ada";
+                    $_SESSION['tipe_alert'] = "error";
+                    header("Location: edit.php?id=$id");
+                    exit();
+                }
+            }
 
-    //         }
-    //     } else {
-    //         $query = "UPDATE `tbl_register` SET `name`='$name',`email`='$email',
-    //         `phone`='$phone',`address`='$address' WHERE id=$id";
+            // Update the record
+            $update_query = "UPDATE `barang` SET `kode_barang`='$kode_barang',`nama_barang`='$nama_barang',`jumlah_barang`='$jumlah_barang',`satuan_barang`='$satuan_barang', `harga_beli`='$harga_beli', `status_barang`='$status_barang' WHERE id_barang=$id";
 
-    //         $result = $this->db->insert($query);
+            $result = $this->db->update($update_query);
 
-    //         if ($result) {
-    //             $msg = "Student Updated Successfull";
-    //             return $msg;
-    //         } else {
-    //             $msg = "Update Failed";
-    //             return $msg;
-    //         }
-    //     }
+            if ($result) {
+                $_SESSION['toast_message'] = "Berhasil Diupdate";
+                $_SESSION['toast_type'] = "success";
+                header("Location: index.php");
+                exit();
+            } else {
+                $_SESSION['toast_message'] = "Gagal Diupdate";
+                $_SESSION['toast_type'] = "error";
+                header("Location: index.php");
+                exit();
+            }
+        }
+    }
 
-    // }
-
-    // public function deleteStudent($id)
-    // {
-    //     $img_query = "SELECT * FROM tbl_register WHERE id = '$id'";
-    //     $img_res = $this->db->select($img_query);
-    //     if ($img_res) {
-    //         while ($row = mysqli_fetch_assoc($img_res)) {
-    //             $photo = $row["photo"];
-    //             unlink($photo);
-    //         }
-    //     }
-
-    //     $query = "DELETE FROM `tbl_register` WHERE id='$id'";
-    //     $result = $this->db->delete($query);
-    //     if ($result) {
-    //         $msg = "Deleted Successfully";
-    //         return $msg;
-    //     } else {
-    //         $msg = "Delete Failed";
-    //         return $msg;
-    //     }
-    // }
+    public function hapusBarang($id)
+    {
+        $query = "DELETE FROM `barang` WHERE id_barang='$id'";
+        $result = $this->db->hapus($query);
+        if ($result) {
+            $_SESSION['toast_message'] = "Berhasil Dihapus";
+            $_SESSION['toast_type'] = "success";
+            header("Location: index.php");
+            exit();
+        } else {
+            $_SESSION['toast_message'] = "Gagal Dihapus";
+            $_SESSION['toast_type'] = "error";
+            header("Location: index.php");
+            exit();
+        }
+    }
 }

@@ -4,7 +4,7 @@ include_once "classes/Barang.php";
 
 $re = new Barang();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $masukkan = $re->tambahBarang($_POST);
+    $re->tambahBarang($_POST);
 }
 
 $titleHalaman = "Masukkan Data";
@@ -20,52 +20,66 @@ Lihat Data
 </a>
 ';
 
-include ("includes/header.php");
-include ("includes/navbar.php");
+include("includes/header.php");
+include("includes/navbar.php");
+function getNilaiValue($key)
+{
+    return isset($_SESSION['old'][$key]) ? htmlspecialchars($_SESSION['old'][$key]) : '';
+}
+
+function getPostCek($key, $value)
+{
+    return (isset($_SESSION['old'][$key]) && $_SESSION['old'][$key] == $value) ? 'checked' : '';
+}
+
+function getPostTerpilih($key, $value)
+{
+    return (isset($_SESSION['old'][$key]) && $_SESSION['old'][$key] == $value) ? 'selected' : '';
+}
 ?>
 
 <div class="container container-small">
     <div class="pt-2 pb-5">
         <form method="post">
 
-            <?php include ("pesan.php") ?>
+            <?php include("pesan.php") ?>
 
             <div class="mb-3">
                 <label for="kode_barang" class="form-label">Kode Barang</label>
-                <input type="text" name="kode_barang" class="form-control" id="kode_barang" required>
+                <input type="text" name="kode_barang" class="form-control" id="kode_barang" required value="<?= getNilaiValue('kode_barang') ?>">
             </div>
             <div class="mb-3">
                 <label for="nama_barang" class="form-label">Nama Barang</label>
-                <input type="text" name="nama_barang" class="form-control" id="nama_barang" required>
+                <input type="text" name="nama_barang" class="form-control" id="nama_barang" required value="<?= getNilaiValue('nama_barang') ?>">
             </div>
             <div class="mb-3">
                 <label for="jumlah_barang" class="form-label">Jumlah Barang</label>
-                <input type="number" name="jumlah_barang" class="form-control" id="jumlah_barang" required>
+                <input type="number" name="jumlah_barang" class="form-control" id="jumlah_barang" required value="<?= getNilaiValue('jumlah_barang') ?>">
             </div>
             <div class="mb-3">
                 <label for="satuan_barang" class="form-label">Satuan Barang</label>
                 <select class="form-select" name="satuan_barang" id="satuan_barang" required>
                     <option value="">Pilih Satuan Barang</option>
-                    <option value="kg">Kg</option>
-                    <option value="pcs">Pcs</option>
-                    <option value="liter">Liter</option>
-                    <option value="meter">Meter</option>
+                    <option value="kg" <?= getPostTerpilih('satuan_barang', 'kg') ?>>Kg</option>
+                    <option value="pcs" <?= getPostTerpilih('satuan_barang', 'pcs') ?>>Pcs</option>
+                    <option value="liter" <?= getPostTerpilih('satuan_barang', 'liter') ?>>Liter</option>
+                    <option value="meter" <?= getPostTerpilih('satuan_barang', 'meter') ?>>Meter</option>
                 </select>
             </div>
             <div class="mb-3">
                 <label for="harga_beli" class="form-label">Harga Beli</label>
-                <input type="number" name="harga_beli" class="form-control" id="harga_beli" required>
+                <input type="number" name="harga_beli" class="form-control" id="harga_beli" required value="<?= getNilaiValue('harga_beli') ?>">
             </div>
             <div class="mb-3">
                 <label for="status_barang" class="form-label">Status Barang</label>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="status_barang" value="true" checked>
+                    <input class="form-check-input" type="radio" name="status_barang" value="true" <?= getPostCek('status_barang', 'true') ?>>
                     <label class="form-check-label">
                         Available
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="status_barang" value="false">
+                    <input class="form-check-input" type="radio" name="status_barang" value="false" <?= getPostCek('status_barang', 'false') ?>>
                     <label class="form-check-label">
                         Not Available
                     </label>
@@ -76,4 +90,4 @@ include ("includes/navbar.php");
     </div>
 </div>
 
-<?php include ("includes/footer.php") ?>
+<?php include("includes/footer.php") ?>

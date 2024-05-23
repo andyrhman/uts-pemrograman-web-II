@@ -19,6 +19,7 @@ Tambah Data
 
 $semuaBarang = $re->semuaBarang();
 
+// * Update Jumlah dan Pemakaian Barang
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['pakai_barang'])) {
         $kode_barang = $_POST['kode_barang'];
@@ -33,8 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
 }
 
-include ("includes/header.php");
-include ("includes/navbar.php");
+// * Hapus Barang
+if (isset($_GET['del'])) {
+    $id = $_GET['del'];
+    $re->hapusBarang($id);
+}
+
+include("includes/header.php");
+include("includes/navbar.php");
 ?>
 
 <div class="container">
@@ -61,7 +68,7 @@ include ("includes/navbar.php");
 
                     // Format harga_beli menjadi Rupiah
                     $formatHargaBeli = "Rp" . number_format($row['harga_beli'], 0, ',', '.');
-                    ?>
+            ?>
                     <tr>
                         <th scope="row"><?= $rowNumber++ ?></th>
                         <td><?= $row['kode_barang'] ?></td>
@@ -69,49 +76,33 @@ include ("includes/navbar.php");
                         <td><?= $row['jumlah_barang'] ?></td>
                         <td><?= $row['satuan_barang'] ?></td>
                         <td><?= $formatHargaBeli ?></td>
-                        <td><span class="badge rounded-pill <?= $badgeClass ?>"><?= $status ?></span></td>
                         <td>
-                            <button type="button" class="btn btn-sm btn-primary rounded" data-bs-toggle="modal"
-                                data-bs-target="#exampleModal" data-kode-barang="<?= $row['kode_barang'] ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                                    fill="#e8eaed">
-                                    <path
-                                        d="M216-720h528l-34-40H250l-34 40Zm184 270 80-40 80 40v-190H400v190ZM200-120q-33 0-56.5-23.5T120-200v-499q0-14 4.5-27t13.5-24l50-61q11-14 27.5-21.5T250-840h460q18 0 34.5 7.5T772-811l50 61q9 11 13.5 24t4.5 27v139q-21 0-41.5 3T760-545v-95H640v205l-77 77-83-42-160 80v-320H200v440h280v80H200Zm440-520h120-120Zm-440 0h363-363Zm360 520v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-340L683-120H560Zm300-263-37-37 37 37ZM620-180h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+
+                            <button type="button" class="btn badge rounded-pill <?= $badgeClass ?>" onclick="toggleStatus('<?= $row['kode_barang'] ?>', <?= $row['status_barang'] ?>)" style="outline: none;">
+                                <?= $status ?>
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-warning rounded" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kode-barang="<?= $row['kode_barang'] ?>">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                                    <path d="M216-720h528l-34-40H250l-34 40Zm184 270 80-40 80 40v-190H400v190ZM200-120q-33 0-56.5-23.5T120-200v-499q0-14 4.5-27t13.5-24l50-61q11-14 27.5-21.5T250-840h460q18 0 34.5 7.5T772-811l50 61q9 11 13.5 24t4.5 27v139q-21 0-41.5 3T760-545v-95H640v205l-77 77-83-42-160 80v-320H200v440h280v80H200Zm440-520h120-120Zm-440 0h363-363Zm360 520v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-340L683-120H560Zm300-263-37-37 37 37ZM620-180h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+                                </svg>
+                            </button>
+                            <a href="edit.php?id=<?= $row["id_barang"] ?>" class="btn btn-sm btn-info rounded">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                                    <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z" />
+                                </svg>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger rounded" data-bs-toggle="modal" data-bs-target="#hapusModal" data-id="<?= $row["id_barang"] ?>">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
                                 </svg>
                             </button>
                         </td>
                     </tr>
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Pakai atau Tambah barang</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="kode_barang" value="<?= $row['kode_barang'] ?>">
-                                        <input type="number" name="jumlah" min="1" placeholder="Jumlah">
-                                        <button type="submit" name="pakai_barang" class="btn btn-warning btn-sm">Pakai</button>
-                                    </form>
-                                    <!-- Form to add items -->
-                                    <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="kode_barang" value="<?= $row['kode_barang'] ?>">
-                                        <input type="number" name="jumlah" min="1" placeholder="Jumlah">
-                                        <button type="submit" name="tambah_jumlah_barang"
-                                            class="btn btn-info btn-sm">Tambah</button>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <?php
+                    <?php include('includes/barang_modal.php') ?>
+                    <?php include('includes/hapus_modal.php') ?>
+            <?php
                 }
             }
             ?>
@@ -119,38 +110,44 @@ include ("includes/navbar.php");
     </table>
 </div>
 
-
-<!-- Bootstrap Toast -->
-<div class="toast-container position-fixed top-0 end-0 p-3">
-    <div id="liveToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive"
-        aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">
-                <?php
-                if (isset($_SESSION['toast_message'])) {
-                    echo $_SESSION['toast_message'];
-                    unset($_SESSION['toast_message']);
-                }
-                ?>
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                aria-label="Close"></button>
-        </div>
-    </div>
-</div>
-
-<script src="assets/js/datatable-config.js"></script>
-
+<?php include('includes/toast.php') ?>
 <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        <?php if (isset($_SESSION['toast_type'])) { ?>
-            var toastLiveExample = document.getElementById('liveToast');
-            var toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-            toastBootstrap.show();
-            <?php unset($_SESSION['toast_type']); ?>
-        <?php } ?>
+    let deleteId;
+
+    // Capture the item ID when the delete button is clicked
+    $('#hapusModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        deleteId = button.data('id'); // Extract info from data-* attributes
+    });
+
+    // Handle the deletion when the confirm delete button is clicked
+    document.getElementById('hapusData').addEventListener('click', function() {
+        // Redirect to the delete URL
+        window.location.href = "?del=" + deleteId;
     });
 </script>
+
+<script>
+    function toggleStatus(kode_barang, currentStatus) {
+        var status_baru = currentStatus === 1 ? 0 : 1; // Flip the status
+        $.ajax({
+            url: 'ganti_status.php',
+            method: 'POST',
+            data: {
+                kode_barang: kode_barang,
+                status_barang: status_baru
+            },
+            success: function(response) {
+                location.reload(); // Reload the page to reflect changes
+            },
+            error: function(xhr, status, error) {
+                console.error("An error occurred: ", error);
+            }
+        });
+    }
+</script>
+<script src="assets/js/datatable-config.js"></script>
+
 <script src="assets/js/tunjukkan-modal.js"></script>
 
-<?php include ("includes/footer.php") ?>
+<?php include("includes/footer.php") ?>

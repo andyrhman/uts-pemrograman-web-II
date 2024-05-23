@@ -28,7 +28,7 @@
                             <use xlink:href="#bootstrap" />
                         </svg>
                     </a>
-                    <span class="text-body-secondary">&copy; 2024 Company, Inc</span>
+                    <span class="text-body-secondary">&copy; <?php echo date("Y");?> Andy Rahman</span>
                 </div>
 
                 <ul class="nav col-md-4 justify-content-end list-unstyled d-flex mb-0">
