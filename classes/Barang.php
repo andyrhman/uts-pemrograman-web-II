@@ -54,20 +54,13 @@ class Barang
         }
     }
 
-    public function semuaBarang($limit, $offset)
+    public function semuaBarang()
     {
-        $query = "SELECT * FROM `barang` ORDER BY id_barang DESC LIMIT $limit OFFSET $offset";
+        $query = "SELECT * FROM `barang` ORDER BY id_barang DESC";
         $result = $this->db->pilih($query);
         return $result;
     }
 
-    public function hitungBarang()
-    {
-        $query = "SELECT COUNT(*) as count FROM `barang`";
-        $result = $this->db->pilih($query);
-        $row = mysqli_fetch_assoc($result);
-        return $row['count'];
-    }
 
     public function pakaiBarang($kode_barang, $jumlah)
     {
