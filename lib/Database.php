@@ -74,6 +74,30 @@ class Database
             return false;
         }
     }
-}
 
-?>
+    public function siapkanPilihan($query, $types, ...$params)
+    {
+        $stmt = $this->link->prepare($query);
+        if ($stmt === false) {
+            die("Ada kesalahan: " . $this->link->error);
+        }
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $hasil = $stmt->get_result();
+        $stmt->close();
+        return $hasil;
+    }
+
+    public function siapkanDanJalankan($query, $types, ...$params)
+    {
+        $stmt = $this->link->prepare($query);
+        if ($stmt === false) {
+            die("Ada kesalahan: " . $this->link->error);
+        }
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $hasil = $stmt->affected_rows;
+        $stmt->close();
+        return $hasil;
+    }
+}

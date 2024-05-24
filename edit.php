@@ -3,11 +3,9 @@ session_start();
 include_once "classes/Barang.php";
 
 $re = new Barang();
-if (isset($_GET["id"])) {
-    $id = $_GET["id"];
-}
+$id = isset($_GET["id"]) ? $_GET["id"] : null;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $id !== null) {
     $re->updateBarang($_POST, $id);
 }
 
@@ -31,54 +29,56 @@ include("includes/navbar.php");
 <div class="container container-small">
     <div class="pt-2 pb-5">
         <?php
-        $pilihBarang = $re->pilihBarang($id);
-        if ($pilihBarang) {
-            while ($row = mysqli_fetch_assoc($pilihBarang)) {
+        if ($id !== null) {
+            $pilihBarang = $re->pilihBarang($id);
+            if ($pilihBarang) {
+                while ($row = $pilihBarang->fetch_assoc()) {
         ?>
-                <form method="post">
+                    <form method="post">
 
-                    <?php include("pesan.php") ?>
+                        <?php include("pesan.php") ?>
 
-                    <div class="mb-3">
-                        <label for="kode_barang" class="form-label">Kode Barang</label>
-                        <input type="text" value="<?= $row['kode_barang'] ?>" name="kode_barang" class="form-control" id="kode_barang" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="nama_barang" class="form-label">Nama Barang</label>
-                        <input type="text" value="<?= $row['nama_barang'] ?>" name="nama_barang" class="form-control" id="nama_barang" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="jumlah_barang" class="form-label">Jumlah Barang</label>
-                        <input type="number" value="<?= $row['jumlah_barang'] ?>" name="jumlah_barang" class="form-control" id="jumlah_barang" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="satuan_barang" class="form-label">Satuan Barang</label>
-                        <select class="form-select" name="satuan_barang" id="satuan_barang" required>
-                            <option value="<?= $row['satuan_barang'] ?>"><?= $row['satuan_barang'] ?></option>
-                            <option value="kg">Kg</option>
-                            <option value="pcs">Pcs</option>
-                            <option value="liter">Liter</option>
-                            <option value="meter">Meter</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="harga_beli" class="form-label">Harga Beli</label>
-                        <input type="number" value="<?= $row['harga_beli'] ?>" name="harga_beli" class="form-control" id="harga_beli" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="status_barang" class="form-label">Status Barang</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="status_barang" value="true" <?php if ($row['status_barang'] == 1) echo 'checked'; ?>>
-                            <label class="form-check-label">Available</label>
+                        <div class="mb-3">
+                            <label for="kode_barang" class="form-label">Kode Barang</label>
+                            <input type="text" value="<?= htmlspecialchars($row['kode_barang'], ENT_QUOTES, 'UTF-8') ?>" name="kode_barang" class="form-control" id="kode_barang" required>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="status_barang" value="false" <?php if ($row['status_barang'] == 0) echo 'checked'; ?>>
-                            <label class="form-check-label">Not Available</label>
+                        <div class="mb-3">
+                            <label for="nama_barang" class="form-label">Nama Barang</label>
+                            <input type="text" value="<?= htmlspecialchars($row['nama_barang'], ENT_QUOTES, 'UTF-8') ?>" name="nama_barang" class="form-control" id="nama_barang" required>
                         </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+                        <div class="mb-3">
+                            <label for="jumlah_barang" class="form-label">Jumlah Barang</label>
+                            <input type="number" value="<?= htmlspecialchars($row['jumlah_barang'], ENT_QUOTES, 'UTF-8') ?>" name="jumlah_barang" class="form-control" id="jumlah_barang" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="satuan_barang" class="form-label">Satuan Barang</label>
+                            <select class="form-select" name="satuan_barang" id="satuan_barang" required>
+                                <option value="<?= htmlspecialchars($row['satuan_barang'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($row['satuan_barang'], ENT_QUOTES, 'UTF-8') ?></option>
+                                <option value="kg">Kg</option>
+                                <option value="pcs">Pcs</option>
+                                <option value="liter">Liter</option>
+                                <option value="meter">Meter</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="harga_beli" class="form-label">Harga Beli</label>
+                            <input type="number" value="<?= htmlspecialchars($row['harga_beli'], ENT_QUOTES, 'UTF-8') ?>" name="harga_beli" class="form-control" id="harga_beli" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="status_barang" class="form-label">Status Barang</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="status_barang" value="true" <?php if ($row['status_barang'] == 1) echo 'checked'; ?>>
+                                <label class="form-check-label">Available</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="status_barang" value="false" <?php if ($row['status_barang'] == 0) echo 'checked'; ?>>
+                                <label class="form-check-label">Not Available</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
         <?php
+                }
             }
         }
         ?>

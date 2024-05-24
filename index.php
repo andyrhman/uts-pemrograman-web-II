@@ -101,7 +101,6 @@ include("includes/navbar.php");
                         </td>
                     </tr>
                     <?php include('includes/barang_modal.php') ?>
-                    <?php include('includes/hapus_modal.php') ?>
             <?php
                 }
             }
@@ -109,7 +108,7 @@ include("includes/navbar.php");
         </tbody>
     </table>
 </div>
-
+<?php include('includes/hapus_modal.php') ?>
 <?php include('includes/toast.php') ?>
 <script>
     let deleteId;

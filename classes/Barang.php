@@ -12,19 +12,19 @@ class Barang
 
     public function tambahBarang($data)
     {
-        $kode_barang = mysqli_real_escape_string($this->db->link, $data['kode_barang']);
-        $nama_barang = mysqli_real_escape_string($this->db->link, $data['nama_barang']);
-        $jumlah_barang = mysqli_real_escape_string($this->db->link, $data['jumlah_barang']);
-        $satuan_barang = mysqli_real_escape_string($this->db->link, $data['satuan_barang']);
-        $harga_beli = mysqli_real_escape_string($this->db->link, $data['harga_beli']);
+        $kode_barang = $data['kode_barang'];
+        $nama_barang = $data['nama_barang'];
+        $jumlah_barang = $data['jumlah_barang'];
+        $satuan_barang = $data['satuan_barang'];
+        $harga_beli = $data['harga_beli'];
         $status_barang = ($data['status_barang'] === 'true') ? 1 : 0;
 
-        // Simpan sesi lama di input value
+        // Simpan sesi lama data
         $_SESSION['old'] = $data;
 
-        // Cek kode barang
-        $checkBarang = "SELECT * FROM `barang` WHERE `kode_barang` = '$kode_barang'";
-        $hasilCheck = $this->db->pilih($checkBarang);
+        // Check kode barang
+        $checkBarangQuery = "SELECT * FROM `barang` WHERE `kode_barang` = ?";
+        $hasilCheck = $this->db->siapkanPilihan($checkBarangQuery, 's', $kode_barang);
 
         if ($hasilCheck->num_rows > 0) {
             $_SESSION['pesan_alert'] = "Kode Barang sudah ada";
@@ -58,11 +58,10 @@ class Barang
             exit();
         } else {
             $query = "INSERT INTO `barang`(`kode_barang`, `nama_barang`, `jumlah_barang`, `satuan_barang`, `harga_beli`, `status_barang`) 
-            VALUES ('$kode_barang', '$nama_barang', '$jumlah_barang', '$satuan_barang', '$harga_beli', '$status_barang')";
+                      VALUES (?, ?, ?, ?, ?, ?)";
+            $hasil = $this->db->siapkanDanJalankan($query, 'ssisii', $kode_barang, $nama_barang, $jumlah_barang, $satuan_barang, $harga_beli, $status_barang);
 
-            $hasil = $this->db->masukkan($query);
-
-            if ($hasil) {
+            if ($hasil > 0) {
                 unset($_SESSION['old']);
                 $_SESSION['pesan_toast'] = "Berhasil Dimasukkan";
                 $_SESSION['tipe_toast'] = "success";
@@ -84,15 +83,32 @@ class Barang
         return $hasil;
     }
 
-
     public function pakaiBarang($kode_barang, $jumlah)
     {
         $kode_barang = mysqli_real_escape_string($this->db->link, $kode_barang);
         $jumlah = (int) $jumlah;
 
-        $query = "UPDATE `barang` SET `jumlah_barang` = `jumlah_barang` - $jumlah WHERE `kode_barang` = '$kode_barang' AND `jumlah_barang` >= $jumlah";
+        // Periksa jumlah_barang saat ini
+        $queryPeriksa = "SELECT `jumlah_barang` FROM `barang` WHERE `kode_barang` = '$kode_barang'";
+        $hasilPeriksa = $this->db->pilih($queryPeriksa);
+        if ($hasilPeriksa && $hasilPeriksa->num_rows > 0) {
+            $baris = $hasilPeriksa->fetch_assoc();
+            $jumlahSaatIni = (int) $baris['jumlah_barang'];
 
-        $hasil = $this->db->update($query);
+            if ($jumlah > $jumlahSaatIni) {
+                $_SESSION['pesan_toast'] = "Jumlah barang tidak mencukupi.";
+                $_SESSION['tipe_toast'] = "error";
+                return false;
+            }
+        } else {
+            $_SESSION['pesan_toast'] = "Barang tidak ditemukan.";
+            $_SESSION['tipe_toast'] = "error";
+            return false;
+        }
+
+        // Lanjutkan untuk memperbarui jumlah_barang jika pemeriksaan lolos
+        $queryPerbarui = "UPDATE `barang` SET `jumlah_barang` = `jumlah_barang` - $jumlah WHERE `kode_barang` = '$kode_barang' AND `jumlah_barang` >= $jumlah";
+        $hasil = $this->db->update($queryPerbarui);
 
         if ($hasil) {
             $_SESSION['pesan_toast'] = "Barang berhasil dipakai.";
@@ -147,9 +163,8 @@ class Barang
 
     public function pilihBarang($id)
     {
-        $query = "SELECT * FROM `barang` WHERE id_barang='$id'";
-        $hasil = $this->db->pilih($query);
-        return $hasil;
+        $query = "SELECT * FROM `barang` WHERE id_barang = ?";
+        return $this->db->siapkanPilihan($query, "i", $id);
     }
 
     public function updateBarang($data, $id)

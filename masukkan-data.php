@@ -24,7 +24,7 @@ include("includes/header.php");
 include("includes/navbar.php");
 function getNilaiValue($key)
 {
-    return isset($_SESSION['old'][$key]) ? htmlspecialchars($_SESSION['old'][$key]) : '';
+    return isset($_SESSION['old'][$key]) ? htmlspecialchars($_SESSION['old'][$key], ENT_QUOTES, 'UTF-8') : '';
 }
 
 function getPostCek($key, $value)
