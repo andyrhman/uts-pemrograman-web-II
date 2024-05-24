@@ -6,7 +6,7 @@ $('#data_barang').DataTable({
     autoWidth: false,
     responsive: true,
     pageLength: 10,
-    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"]], // Customize the entries dropdown
+    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"]],
     language: {
         processing: "Sedang diproses...",
         search: "Cari&nbsp;:",

@@ -60,17 +60,17 @@ class Barang
             $query = "INSERT INTO `barang`(`kode_barang`, `nama_barang`, `jumlah_barang`, `satuan_barang`, `harga_beli`, `status_barang`) 
             VALUES ('$kode_barang', '$nama_barang', '$jumlah_barang', '$satuan_barang', '$harga_beli', '$status_barang')";
 
-            $result = $this->db->masukkan($query);
+            $hasil = $this->db->masukkan($query);
 
-            if ($result) {
+            if ($hasil) {
                 unset($_SESSION['old']);
-                $_SESSION['toast_message'] = "Berhasil Dimasukkan";
-                $_SESSION['toast_type'] = "success";
+                $_SESSION['pesan_toast'] = "Berhasil Dimasukkan";
+                $_SESSION['tipe_toast'] = "success";
                 header("Location: index.php");
                 exit();
             } else {
-                $_SESSION['toast_message'] = "Gagal Dimasukkan";
-                $_SESSION['toast_type'] = "error";
+                $_SESSION['pesan_toast'] = "Gagal Dimasukkan";
+                $_SESSION['tipe_toast'] = "error";
                 header("Location: index.php");
                 exit();
             }
@@ -80,8 +80,8 @@ class Barang
     public function semuaBarang()
     {
         $query = "SELECT * FROM `barang` ORDER BY id_barang DESC";
-        $result = $this->db->pilih($query);
-        return $result;
+        $hasil = $this->db->pilih($query);
+        return $hasil;
     }
 
 
@@ -92,15 +92,15 @@ class Barang
 
         $query = "UPDATE `barang` SET `jumlah_barang` = `jumlah_barang` - $jumlah WHERE `kode_barang` = '$kode_barang' AND `jumlah_barang` >= $jumlah";
 
-        $result = $this->db->update($query);
+        $hasil = $this->db->update($query);
 
-        if ($result) {
-            $_SESSION['toast_message'] = "Barang berhasil dipakai.";
-            $_SESSION['toast_type'] = "success";
+        if ($hasil) {
+            $_SESSION['pesan_toast'] = "Barang berhasil dipakai.";
+            $_SESSION['tipe_toast'] = "success";
             return true;
         } else {
-            $_SESSION['toast_message'] = "Gagal memakai barang.";
-            $_SESSION['toast_type'] = "error";
+            $_SESSION['pesan_toast'] = "Gagal memakai barang.";
+            $_SESSION['tipe_toast'] = "error";
             return false;
         }
     }
@@ -112,15 +112,15 @@ class Barang
 
         $query = "UPDATE `barang` SET `jumlah_barang` = `jumlah_barang` + $jumlah WHERE `kode_barang` = '$kode_barang'";
 
-        $result = $this->db->update($query);
+        $hasil = $this->db->update($query);
 
-        if ($result) {
-            $_SESSION['toast_message'] = "Jumlah barang berhasil ditambah.";
-            $_SESSION['toast_type'] = "success";
+        if ($hasil) {
+            $_SESSION['pesan_toast'] = "Jumlah barang berhasil ditambah.";
+            $_SESSION['tipe_toast'] = "success";
             return true;
         } else {
-            $_SESSION['toast_message'] = "Gagal menambah jumlah barang.";
-            $_SESSION['toast_type'] = "error";
+            $_SESSION['pesan_toast'] = "Gagal menambah jumlah barang.";
+            $_SESSION['tipe_toast'] = "error";
             return false;
         }
     }
@@ -132,15 +132,15 @@ class Barang
 
         $query = "UPDATE `barang` SET `status_barang` = $status_barang WHERE `kode_barang` = '$kode_barang'";
 
-        $result = $this->db->update($query);
+        $hasil = $this->db->update($query);
 
-        if ($result) {
-            $_SESSION['toast_message'] = "Status barang berhasil diganti.";
-            $_SESSION['toast_type'] = "success";
+        if ($hasil) {
+            $_SESSION['pesan_toast'] = "Status barang berhasil diganti.";
+            $_SESSION['tipe_toast'] = "success";
             return true;
         } else {
-            $_SESSION['toast_message'] = "Gagal mengganti status barang.";
-            $_SESSION['toast_type'] = "error";
+            $_SESSION['pesan_toast'] = "Gagal mengganti status barang.";
+            $_SESSION['tipe_toast'] = "error";
             return false;
         }
     }
@@ -148,8 +148,8 @@ class Barang
     public function pilihBarang($id)
     {
         $query = "SELECT * FROM `barang` WHERE id_barang='$id'";
-        $result = $this->db->pilih($query);
-        return $result;
+        $hasil = $this->db->pilih($query);
+        return $hasil;
     }
 
     public function updateBarang($data, $id)
@@ -187,19 +187,19 @@ class Barang
             header("Location: edit.php?id=$id");
             exit();
         } else {
-            // Fetch the current kode_barang from the database
-            $current_query = "SELECT kode_barang FROM `barang` WHERE id_barang = $id";
-            $current_result = $this->db->pilih($current_query);
-            $current_row = mysqli_fetch_assoc($current_result);
-            $current_kode_barang = $current_row['kode_barang'];
+            // Ambil data kode barang di database
+            $cari_kodebarang = "SELECT kode_barang FROM `barang` WHERE id_barang = $id";
+            $hasil_pencarian = $this->db->pilih($cari_kodebarang);
+            $row_pencarian = mysqli_fetch_assoc($hasil_pencarian);
+            $kodebarang_tercari = $row_pencarian['kode_barang'];
 
-            // Check if kode_barang has changed
-            if ($kode_barang !== $current_kode_barang) {
-                // Check if the new kode_barang already exists
-                $check_query = "SELECT * FROM `barang` WHERE kode_barang = '$kode_barang'";
-                $check_result = $this->db->pilih($check_query);
+            // Cek jika kode barang berubah
+            if ($kode_barang !== $kodebarang_tercari) {
+                // Cek jika kode barang terbaru ada
+                $cek_query = "SELECT * FROM `barang` WHERE kode_barang = '$kode_barang'";
+                $cek_hasil = $this->db->pilih($cek_query);
 
-                if ($check_result) {
+                if ($cek_hasil) {
                     $_SESSION['pesan_alert'] = "Kode Barang sudah ada";
                     $_SESSION['tipe_alert'] = "error";
                     header("Location: edit.php?id=$id");
@@ -207,19 +207,19 @@ class Barang
                 }
             }
 
-            // Update the record
+            // Update data barang
             $update_query = "UPDATE `barang` SET `kode_barang`='$kode_barang',`nama_barang`='$nama_barang',`jumlah_barang`='$jumlah_barang',`satuan_barang`='$satuan_barang', `harga_beli`='$harga_beli', `status_barang`='$status_barang' WHERE id_barang=$id";
 
-            $result = $this->db->update($update_query);
+            $hasil = $this->db->update($update_query);
 
-            if ($result) {
-                $_SESSION['toast_message'] = "Berhasil Diupdate";
-                $_SESSION['toast_type'] = "success";
+            if ($hasil) {
+                $_SESSION['pesan_toast'] = "Berhasil Diupdate";
+                $_SESSION['tipe_toast'] = "success";
                 header("Location: index.php");
                 exit();
             } else {
-                $_SESSION['toast_message'] = "Gagal Diupdate";
-                $_SESSION['toast_type'] = "error";
+                $_SESSION['pesan_toast'] = "Gagal Diupdate";
+                $_SESSION['tipe_toast'] = "error";
                 header("Location: index.php");
                 exit();
             }
@@ -229,15 +229,15 @@ class Barang
     public function hapusBarang($id)
     {
         $query = "DELETE FROM `barang` WHERE id_barang='$id'";
-        $result = $this->db->hapus($query);
-        if ($result) {
-            $_SESSION['toast_message'] = "Berhasil Dihapus";
-            $_SESSION['toast_type'] = "success";
+        $hasil = $this->db->hapus($query);
+        if ($hasil) {
+            $_SESSION['pesan_toast'] = "Berhasil Dihapus";
+            $_SESSION['tipe_toast'] = "success";
             header("Location: index.php");
             exit();
         } else {
-            $_SESSION['toast_message'] = "Gagal Dihapus";
-            $_SESSION['toast_type'] = "error";
+            $_SESSION['pesan_toast'] = "Gagal Dihapus";
+            $_SESSION['tipe_toast'] = "error";
             header("Location: index.php");
             exit();
         }

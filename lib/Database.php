@@ -34,9 +34,9 @@ class Database
     // * Masukkan data
     public function masukkan($query)
     {
-        $result = mysqli_query($this->link, $query) or die($this->link->error . __LINE__);
-        if ($result) {
-            return $result;
+        $hasil = mysqli_query($this->link, $query) or die($this->link->error . __LINE__);
+        if ($hasil) {
+            return $hasil;
         } else {
             return false;
         }
@@ -45,9 +45,9 @@ class Database
     // * Pilih data
     public function pilih($query)
     {
-        $result = mysqli_query($this->link, $query) or die($this->link->error . __LINE__);
-        if (mysqli_num_rows($result) > 0) {
-            return $result;
+        $hasil = mysqli_query($this->link, $query) or die($this->link->error . __LINE__);
+        if (mysqli_num_rows($hasil) > 0) {
+            return $hasil;
         } else {
             return false;
         }
@@ -56,9 +56,9 @@ class Database
     // * Update data
     public function update($query)
     {
-        $result = mysqli_query($this->link, $query) or die($this->link->error . __LINE__);
-        if ($result) {
-            return $result;
+        $hasil = mysqli_query($this->link, $query) or die($this->link->error . __LINE__);
+        if ($hasil) {
+            return $hasil;
         } else {
             return false;
         }
@@ -67,9 +67,9 @@ class Database
     // * Hapus data
     public function hapus($query)
     {
-        $result = mysqli_query($this->link, $query) or die($this->link->error . __LINE__);
-        if ($result) {
-            return $result;
+        $hasil = mysqli_query($this->link, $query) or die($this->link->error . __LINE__);
+        if ($hasil) {
+            return $hasil;
         } else {
             return false;
         }

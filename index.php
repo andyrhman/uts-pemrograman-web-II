@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $jumlah = $_POST['jumlah'];
         $re->tambahJumlahBarang($kode_barang, $jumlah);
     }
-    header("Location: " . $_SERVER['PHP_SELF'] . "?halaman=" . $halaman);
+    header("Location: index.php");
     exit();
 }
 
@@ -114,22 +114,19 @@ include("includes/navbar.php");
 <script>
     let deleteId;
 
-    // Capture the item ID when the delete button is clicked
     $('#hapusModal').on('show.bs.modal', function(event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        deleteId = button.data('id'); // Extract info from data-* attributes
+        var button = $(event.relatedTarget);
+        deleteId = button.data('id');
     });
 
-    // Handle the deletion when the confirm delete button is clicked
     document.getElementById('hapusData').addEventListener('click', function() {
-        // Redirect to the delete URL
         window.location.href = "?del=" + deleteId;
     });
 </script>
 
 <script>
     function toggleStatus(kode_barang, currentStatus) {
-        var status_baru = currentStatus === 1 ? 0 : 1; // Flip the status
+        var status_baru = currentStatus === 1 ? 0 : 1;
         $.ajax({
             url: 'ganti_status.php',
             method: 'POST',
@@ -138,7 +135,7 @@ include("includes/navbar.php");
                 status_barang: status_baru
             },
             success: function(response) {
-                location.reload(); // Reload the page to reflect changes
+                location.reload();
             },
             error: function(xhr, status, error) {
                 console.error("An error occurred: ", error);

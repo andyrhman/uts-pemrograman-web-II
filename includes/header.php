@@ -19,7 +19,7 @@
     <script src="https://cdn.datatables.net/2.0.7/js/dataTables.bootstrap5.js"></script>
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <title><?= $titleHalaman ?> - Inventory</title>
+    <title><?= $titleHalaman ?> - Andy Rahman</title>
 
 </head>
 
