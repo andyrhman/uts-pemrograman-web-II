@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $id !== null) {
 }
 
 $titleHalaman = "Edit Data";
-$titleNavCenter = "<h4>Edit Data Barang</h4>";
+$titleNavCenter = '<h4 class="salsa-regular">Edit Data Barang</h4>';
 $titleNavButton = '
 <a href="index.php" class="btn btn-outline-primary me-2">
 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"

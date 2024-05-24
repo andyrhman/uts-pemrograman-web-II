@@ -7,8 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $re->tambahBarang($_POST);
 }
 
-$titleHalaman = "Masukkan Data";
-$titleNavCenter = "<h4>Masukkan Data Barang</h4>";
+$titleHalaman = "Tambah Data";
+$titleNavCenter = '<h4 class="salsa-regular">Tambah Data Barang</h4>';
 $titleNavButton = '
 <a href="index.php" class="btn btn-outline-primary me-2">
 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
