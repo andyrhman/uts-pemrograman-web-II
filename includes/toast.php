@@ -1,3 +1,10 @@
+<!-- 
+    Project Ini Dibuat oleh:
+    NAMA :ANDY RAHMAN RAMADHAN
+    NIM  :220401070404
+    KELAS:IT403
+    MAPEL:PEMROGRAMAN WEB II
+ -->
 <div class="toast-container position-fixed top-0 end-0 p-3">
     <div id="liveToast" class="toast align-items-center <?php echo (isset($_SESSION['tipe_toast']) && $_SESSION['tipe_toast'] == 'error') ? 'text-bg-danger' : 'text-bg-success'; ?> border-0" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
